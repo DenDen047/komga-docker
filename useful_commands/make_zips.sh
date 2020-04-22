@@ -1,16 +1,24 @@
 #!/bin/bash
 
-counter(){
+make_zips(){
     for dir in "$1"/*
     do
         if [ -d "$dir" ]   # is $dir a directory?
         then
-            echo "$dir"
-            counter "$dir"
+            root_dir=$(pwd)
+
+            # make a zip file
+            zip_name=`echo ${dir} | awk -F "/" '{ print $NF }'`
+            cd $(dirname ${dir}) && \
+            zip -r ${zip_name}.zip ${zip_name}
+
+            cd ${root_dir}
+
+            # recursively
+            make_zips ${dir}
         fi
     done
 }
 
 cd ~/Downloads && \
-counter "test"
-# zip -r hoge.zip test/
+make_zips test
